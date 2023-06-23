@@ -54,5 +54,4 @@ public class RegisterDto {
                 ", role=" + role +
                 '}';
     }
-
 }

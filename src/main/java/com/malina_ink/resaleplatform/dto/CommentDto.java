@@ -59,7 +59,6 @@ public class CommentDto {
         return Objects.hash(author, authorImage, authorFirstName, createdAt, pk, text);
     }
 
-
     @Override
     public String toString() {
         return "CommentDto{" +

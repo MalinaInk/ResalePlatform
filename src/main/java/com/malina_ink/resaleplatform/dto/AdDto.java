@@ -27,7 +27,6 @@ public class AdDto {
         this.title = title;
     }
 
-
     public AdDto(int author,
                  int pk,
                  int price,
