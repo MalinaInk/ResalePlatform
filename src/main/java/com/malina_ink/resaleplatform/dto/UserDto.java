@@ -15,6 +15,7 @@ public class UserDto {
     private String phone;
     private String image;
 
+
     public UserDto(int id,
                    String email,
                    String firstName,
@@ -68,4 +69,5 @@ public class UserDto {
                 ", image='" + image + '\'' +
                 '}';
     }
+
 }
