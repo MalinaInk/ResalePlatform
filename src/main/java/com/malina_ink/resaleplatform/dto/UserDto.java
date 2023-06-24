@@ -69,4 +69,5 @@ public class UserDto {
                 ", image='" + image + '\'' +
                 '}';
     }
+
 }

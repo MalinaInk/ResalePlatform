@@ -64,4 +64,5 @@ public class AdDto {
                 ", title='" + title + '\'' +
                 '}';
     }
+
 }
