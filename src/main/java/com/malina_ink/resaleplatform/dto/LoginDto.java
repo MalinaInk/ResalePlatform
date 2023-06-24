@@ -1,12 +1,9 @@
 package com.malina_ink.resaleplatform.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.Objects;
 
-@Getter
-@Setter
+@Data
 public class LoginDto {
     private String username;
     private String password;
