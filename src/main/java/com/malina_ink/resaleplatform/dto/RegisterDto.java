@@ -4,7 +4,6 @@ import com.malina_ink.resaleplatform.enums.Role;
 import lombok.Data;
 
 import java.util.Objects;
-
 @Data
 public class RegisterDto {
     private String username;
