@@ -1,25 +1,21 @@
 package com.malina_ink.resaleplatform.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
+import lombok.Data;
 import java.util.Objects;
 
-@Getter
-@Setter
+@Data
 public class CommentDto {
     private int author;
     private String authorImage;
     private String authorFirstName;
-    private LocalDateTime createdAt;
+    private Long createdAt;
     private int pk;
     private String text;
 
     public CommentDto(int author,
                       String authorImage,
                       String authorFirstName,
-                      LocalDateTime createdAt,
+                      Long createdAt,
                       int pk,
                       String text) {
         this.author = author;
@@ -32,7 +28,7 @@ public class CommentDto {
 
     public CommentDto(int author,
                       String authorFirstName,
-                      LocalDateTime createdAt,
+                      Long createdAt,
                       int pk,
                       String text) {
         this.author = author;

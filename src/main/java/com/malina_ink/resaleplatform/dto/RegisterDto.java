@@ -1,13 +1,10 @@
 package com.malina_ink.resaleplatform.dto;
 
 import com.malina_ink.resaleplatform.enums.Role;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Objects;
-
-@Getter
-@Setter
+@Data
 public class RegisterDto {
     private String username;
     private String password;
