@@ -1,127 +1,105 @@
 package com.malina_ink.resaleplatform.controller;
 
-import org.hibernate.annotations.Parent;
+import com.malina_ink.resaleplatform.dto.NewPasswordDto;
+import com.malina_ink.resaleplatform.dto.UpdateUser;
+import com.malina_ink.resaleplatform.dto.UserDto;
+import com.malina_ink.resaleplatform.entity.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+@CrossOrigin(value = "http://localhost:8080")
 @RestController
 @RequestMapping("/users")
 public class UsersController {
+    @Operation(summary = "Обновление пароля",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "OK"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden"
+                    )
+            })
+    @PostMapping("/set_password")
+    public ResponseEntity<NewPasswordDto> updatePassword(@RequestBody NewPasswordDto newPasswordDto) {
+//        userRepository.setPassword();
+        return ResponseEntity.ok().build();
+    }
 
-////        private final ParentService parentService;
-////        private final ParentRepository parentRepository;
-////
-////        public ParentController(ParentService parentService, ParentRepository parentRepository) {
-////            this.parentService = parentService;
-////            this.parentRepository = parentRepository;
-////        }
-//
-//    //        @Operation(summary = "setPassword",
-////                responses = {
-////                        @ApiResponse(
-////                                responseCode = "200",
-////                                description = "OK",
-////                                content = @Content(
-////                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-////                                        schema = @Schema(implementation = Users.class,
-////                                                $ref: '#/components/schemas/NewPassword')
-////                                )
-////                        ),
-////                        @ApiResponse(
-////                                responseCode = "500",
-////                                description = "Произошла ошибка",
-////                                content = @Content(
-////                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-////                                        schema = @Schema(implementation = Users.class,
-////
-////                                )
-////                        )
-////                })
-//    @PostMapping("/set_password")
-//    public RequestBody create(@RequestBody NewPasswordDto newPasswordDto) {
-//        return userService.getUser().setNewPassword(id);
-//    }
-//
-//    //        @Operation(summary = "setPassword",
-////                responses = {
-////                        @ApiResponse(
-////                                responseCode = "200",
-////                                description = "Усыновитель найден",
-////                                content = @Content(
-////                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-////                                        array = @ArraySchema(schema = @Schema(implementation = Parent.class))
-////                                )
-////                        ),
-////                        @ApiResponse(
-////                                responseCode = "500",
-////                                description = "Произошла ошибка",
-////                                content = @Content(
-////                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-////                                        schema = @Schema(implementation = Parent.class)
-////                                )
-////                        )
-////                })
-//    @GetMapping("/me")
-//    public User read(@PathVariable long id) {
-//        return UserService.getUser(id);
-//    }
-//
-//    //        @Operation(
-////                summary = "Изменить данные об усыновителе",
-////                responses = {
-////                        @ApiResponse(
-////                                responseCode = "200",
-////                                description = "Данные об усыновителе успешно изменены",
-////                                content = @Content(
-////                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-////                                        schema = @Schema(implementation = Parent.class)
-////                                )
-////                        ),
-////                        @ApiResponse(
-////                                responseCode = "500",
-////                                description = "Произошла ошибка",
-////                                content = @Content(
-////                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-////                                        schema = @Schema(implementation = Parent.class)
-////                                )
-////                        )
-////                })
-//    @PutMapping("/me")
-//    public ResponseEntity<User> update(@RequestBody User user) {
-//        User user1 = userService.update(user);
-////            if (parent1 == null) {
-////                return ResponseEntity.notFound().build();
-////            }
-//            return ResponseEntity.ok(user1);
-//
-//    }
-//
-//    //        @Operation(
-////                summary = "Удалить данные усыновителя из базы",
-////                responses = {
-////                        @ApiResponse(
-////                                responseCode = "200",
-////                                description = "Данные успешно удалены",
-////                                content = @Content(
-////                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-////                                        schema = @Schema(implementation = Parent.class)
-////                                )
-////                        ),
-////                        @ApiResponse(
-////                                responseCode = "500",
-////                                description = "Произошла ошибка",
-////                                content = @Content(
-////                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
-////                                        schema = @Schema(implementation = Parent.class)
-////                                )
-////                        )
-////                })
-//    @PutMapping("/me/image")
-//    public String update(@RequestBody MultipartFile image) {
-////    вызов метода
+    @Operation(summary = "Получить информацию об авторизованном пользователе",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ok",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UserDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized"
+                    )
+
+            })
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> readUser(@PathVariable long id) {
+//         UserService.getUser(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            summary = "Обновить информацию об авторизованном пользователе",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ok",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UpdateUser.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized"
+                    )
+
+            })
+    @PutMapping("/me")
+    public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser) {
+//        User User1 = userService.update(user);
+        return ResponseEntity.ok(updateUser);
+    }
+
+    @Operation(
+            summary = "Обновить аватар авторизованного пользователя",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ok"
+
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Unauthorized"
+
+                    )
+            })
+    @PutMapping("/me/image")
+    public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image) {
 //        User user1 = userService.updateImage(image);
-//
-//        return String pathToPhoto;
-//    }
+        return ResponseEntity.ok().build();
+    }
 }
