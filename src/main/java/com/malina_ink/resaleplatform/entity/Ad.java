@@ -13,18 +13,31 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
+@Entity
+@Table(name = "ad")
 public class Ad {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
+    private int pk;
 
-    private int author;
-    private String image;
+    @Column(name = "price")
     private int price;
+
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "description")
     private String description;
-    private String AdImage;
+
+    @Column(name = "ad_image")
+    private String adImage;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private User user;
+
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.DETACH)
     private List<Comment> comments = new ArrayList<>();
-
-
 }
