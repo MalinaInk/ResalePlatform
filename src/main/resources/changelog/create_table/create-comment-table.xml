@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+
+    <changeSet id="create-comment-table.1" author="malinaink">
+
+        <preConditions>
+            <not>
+                <tableExists tableName="comment"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="comment">
+
+            <column name="id" autoIncrement="true" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="created_at" type="BIGINT">
+            </column>
+
+            <column name="text" type="TEXT">
+            </column>
+
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="comment" baseColumnNames="author_id" constraintName="FK_COMMENT_USER_ID" referencedTableName="user"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="comment" baseColumnNames="ad_id" constraintName="FK_COMMENT_AD_ID" referencedTableName="ad"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+</databaseChangeLog>
