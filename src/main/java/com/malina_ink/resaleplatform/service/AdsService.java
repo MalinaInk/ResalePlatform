@@ -6,9 +6,11 @@ import com.malina_ink.resaleplatform.entity.Ad;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
+
 public interface AdsService {
 
-    Ad getAllAds();
+    Collection getAllAds();
 
     AdDto getAdsById(long id);
 

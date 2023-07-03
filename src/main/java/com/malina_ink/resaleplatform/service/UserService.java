@@ -5,9 +5,11 @@ import com.malina_ink.resaleplatform.entity.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collection;
+
 public interface UserService {
 
-    UserDto getAllUsers();
+    Collection getAllUsers();
 
     UserDto updateUser(UserDto userdto, String name);
 
