@@ -5,9 +5,14 @@ import com.malina_ink.resaleplatform.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
-    List<Comment> findAllById(Long id);
+    Optional<Comment> findByIdAndAdsId(Integer commentId, Integer adId);
+    List<Comment> findAllByAdsId(Integer id);
+    void deleteAllByAds_Id(Integer id);
+    void deleteById(Integer id);
+
 }

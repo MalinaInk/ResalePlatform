@@ -1,9 +1,15 @@
 package com.malina_ink.resaleplatform.mapper;
 
 import com.malina_ink.resaleplatform.dto.CommentDto;
+import com.malina_ink.resaleplatform.dto.CommentsDto;
+import com.malina_ink.resaleplatform.dto.CreateOrUpdateCommentDto;
 import com.malina_ink.resaleplatform.entity.Comment;
 import com.malina_ink.resaleplatform.entity.User;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+@Component
 public class CommentMapper {
     public CommentDto toDto(Comment comment) {
         CommentDto dto = new CommentDto();
@@ -26,5 +32,20 @@ public class CommentMapper {
         comment.setCreatedAt(dto.getCreatedAt());
         comment.setText(dto.getText());
         return comment;
+    }
+
+    public List<Comment> toEntity(List<CommentDto> allComments) {
+        return allComments.stream().map(this::toEntity).collect(Collectors.toList());
+    }
+
+    public List<CommentDto> toDto(List<Comment> allComments) {
+        return allComments.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public CommentsDto toCommentsDto(List<Comment> allComment) {
+        CommentsDto result = new CommentsDto();
+        result.setResults(toDto(allComment));
+        result.setCount(allComment.size());
+        return result;
     }
 }

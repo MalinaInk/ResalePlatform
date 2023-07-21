@@ -1,22 +1,38 @@
 package com.malina_ink.resaleplatform.controller;
 
 import com.malina_ink.resaleplatform.dto.NewPasswordDto;
-import com.malina_ink.resaleplatform.dto.UpdateUser;
+import com.malina_ink.resaleplatform.dto.UpdateUserDto;
 import com.malina_ink.resaleplatform.dto.UserDto;
-import com.malina_ink.resaleplatform.entity.User;
+import com.malina_ink.resaleplatform.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
 @CrossOrigin(value = "http://localhost:8080")
 @RestController
 @RequestMapping("/users")
 public class UsersController {
+    private final UserService userService;
+
+    public UsersController(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * Обновление пароля
+     *
+     * @param newPasswordDto   новый пароль
+     * @param authentication авторизованный пользователь
+     * @return новый пароль для авторизованного пользователя
+     */
     @Operation(summary = "Обновление пароля",
             responses = {
                     @ApiResponse(
@@ -33,11 +49,17 @@ public class UsersController {
                     )
             })
     @PostMapping("/set_password")
-    public ResponseEntity<NewPasswordDto> updatePassword(@RequestBody NewPasswordDto newPasswordDto) {
-//        userRepository.setPassword();
+    public ResponseEntity<NewPasswordDto> updatePassword(@RequestBody NewPasswordDto newPasswordDto, Authentication authentication) {
+        userService.setNewPassword(newPasswordDto, authentication);
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Получение информации об авторизованном пользователе
+     *
+     * @param authentication авторизованный пользователь
+     * @return информацию об авторизованном пользователе
+     */
     @Operation(summary = "Получить информацию об авторизованном пользователе",
             responses = {
                     @ApiResponse(
@@ -55,11 +77,17 @@ public class UsersController {
 
             })
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> readUser(@PathVariable long id) {
-//         UserService.getUser(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserDto> readUser(@PathVariable Integer id, Authentication authentication) {
+        return ResponseEntity.ok(userService.getUser(id, authentication));
     }
 
+    /**
+     * Обновить информацию об авторизованном пользователе
+     *
+     * @param updateUser      изменения, вносимые пользователем
+     * @param authentication авторизованный пользователь
+     * @return обновленную информацию об авторизованном пользователе
+     */
     @Operation(
             summary = "Обновить информацию об авторизованном пользователе",
             responses = {
@@ -68,7 +96,7 @@ public class UsersController {
                             description = "Ok",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = UpdateUser.class)
+                                    schema = @Schema(implementation = UpdateUserDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -78,9 +106,8 @@ public class UsersController {
 
             })
     @PutMapping("/me")
-    public ResponseEntity<UpdateUser> updateUser(@RequestBody UpdateUser updateUser) {
-//        User User1 = userService.update(user);
-        return ResponseEntity.ok(updateUser);
+    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUser, Authentication authentication) {
+        return ResponseEntity.ok(userService.updateUser(updateUser, authentication));
     }
 
     @Operation(
@@ -97,9 +124,17 @@ public class UsersController {
 
                     )
             })
+
+    /**
+     * Обновить аватар авторизованного пользователя
+     *
+     * @param image аватар авторизованного пользователя
+     * @return обновленный аватар авторизованного пользователя
+     */
+
     @PutMapping("/me/image")
-    public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image) {
-//        User user1 = userService.updateImage(image);
+    public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image, Authentication authentication) throws IOException {
+        userService.updateUserImage(image, authentication);
         return ResponseEntity.ok().build();
     }
 }

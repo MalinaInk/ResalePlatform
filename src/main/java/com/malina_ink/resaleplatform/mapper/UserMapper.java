@@ -27,5 +27,4 @@ public class UserMapper {
         user.setImage(dto.getImage());
         return user;
     }
-
 }
