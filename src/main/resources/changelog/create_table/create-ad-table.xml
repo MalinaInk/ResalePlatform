@@ -32,6 +32,9 @@
             <column name="ad_image" type="varchar(256)">
             </column>
 
+            <column name="author_id" type="INTEGER">
+            </column>
+
         </createTable>
 
         <addForeignKeyConstraint baseTableName="ad" baseColumnNames="author_id" constraintName="FK_AD_USER_ID" referencedTableName="user"

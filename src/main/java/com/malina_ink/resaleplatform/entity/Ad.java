@@ -20,7 +20,7 @@ public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int pk;
+    private int id;
 
     @Column(name = "price")
     private int price;
@@ -36,7 +36,7 @@ public class Ad {
 
     @ManyToOne
     @JoinColumn(name = "author_id", referencedColumnName = "id")
-    private User user;
+    private User author;
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.DETACH)
     private List<Comment> comments = new ArrayList<>();

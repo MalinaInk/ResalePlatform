@@ -6,6 +6,7 @@ import com.malina_ink.resaleplatform.dto.CreateOrUpdateCommentDto;
 import com.malina_ink.resaleplatform.entity.Ad;
 import com.malina_ink.resaleplatform.entity.Comment;
 import com.malina_ink.resaleplatform.entity.User;
+import com.malina_ink.resaleplatform.exception.AccessErrorException;
 import com.malina_ink.resaleplatform.mapper.CommentMapper;
 import com.malina_ink.resaleplatform.repository.AdRepository;
 import com.malina_ink.resaleplatform.repository.CommentRepository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Сервис для методов работы с комментариями
@@ -41,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
 
     /**
      * Позволяет получить все комментарии к определенному объявлению
-     * <br> Использован метод репозитория {@link CommentRepository#findAllByAdsId(Integer)}
+     * <br> Использован метод репозитория {@link CommentRepository#findAllByAdId(Integer)}
      *
      * @param adsId идентификатор объявления, не может быть null
      * @return возвращает все комментарии к определенному объявлению
@@ -49,14 +51,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentsDto getComments(Integer adsId) {
         log.info("Вызван метод получения всех комментариев к определенному объявлению");
-        return commentMapper.toCommentsDto(commentRepository.findAllByAdsId(adsId));
+        return commentMapper.toCommentsDto(commentRepository.findAllByAdId(adsId));
     }
 
     /**
      * Позволяет добавить комментарий к определенному объявлению
      * <br> Использован метод репозитория {@link CommentRepository#save(Object)}
      *
-     * @param adsId идентификатор объявления, не может быть null
+     * @param adsId          идентификатор объявления, не может быть null
      * @param createComment  создание текста комментария
      * @param authentication авторизованный пользователь
      * @return возвращает добавленный комментарий
@@ -86,33 +88,42 @@ public class CommentServiceImpl implements CommentService {
      * <br> Использован метод репозитория {@link CommentRepository#deleteById(Integer)}
      *
      * @param commentId идентификатор комментария, не может быть null
-//     * @param adsId     идентификатор объявления, не может быть null
+     *                  //     * @param adsId     идентификатор объявления, не может быть null
      */
     @Override
-    public void deleteComment(Integer commentId) {
+    public void deleteComment(Integer commentId, Authentication authentication) {
         log.info("Вызван метод удаления комментария по идентификатору (id)");
-        commentRepository.deleteById(commentId);
+        //проверка на авторство редактируемого/удаляемого
+        Comment updateComment = commentRepository.findById(commentId).orElseThrow(RuntimeException::new);
+        if (!Objects.equals(authentication.getName(), updateComment.getUser())) {
+            throw new AccessErrorException("У вас нет прав на данную операцию");
+            commentRepository.deleteById(commentId);
+        }
     }
 
-    /**
-     * Позволяет изменить комментарий
-     * <br> Использован метод репозитория {@link CommentRepository#findById}
-     * <br> Использован метод репозитория {@link CommentRepository#save(Object)}
-     *
-     * @param commentId      идентификатор комментария, не может быть null
-     * @param comment        измененный комментарий
-     * @return возвращает измененный комментарий
-     */
-    @Override
-    public CommentDto updateComment(Integer adsId,
-                                    @NotNull Integer commentId,
-                                    CreateOrUpdateCommentDto comment) {
-        log.info("Вызван метод обновления комментария по идентификатору (id)");
-        Comment updateCommentEntity = commentRepository.findById(commentId)
-                .orElseThrow(RuntimeException::new);
-        updateCommentEntity.setText(comment.getText());
-        commentRepository.save(updateCommentEntity);
-        return commentMapper.toDto(updateCommentEntity);
+        /**
+         * Позволяет изменить комментарий
+         * <br> Использован метод репозитория {@link CommentRepository#findById}
+         * <br> Использован метод репозитория {@link CommentRepository#save(Object)}
+         *
+         * @param commentId      идентификатор комментария, не может быть null
+         * @param comment        измененный комментарий
+         * @return возвращает измененный комментарий
+         */
+        @Override
+        public CommentDto updateComment (Integer adsId,
+                @NotNull Integer commentId,
+                CreateOrUpdateCommentDto comment,
+                Authentication authentication){
+            log.info("Вызван метод обновления комментария по идентификатору (id)");
+            Comment updateCommentEntity = commentRepository.findById(commentId)
+                    .orElseThrow(RuntimeException::new);
+            //проверка на авторство редактируемого/удаляемого
+            if (!Objects.equals(authentication.getName(), updateCommentEntity.getUser())) {
+                throw new AccessErrorException("У вас нет прав на данную операцию");
+            updateCommentEntity.setText(comment.getText());
+            commentRepository.save(updateCommentEntity);
+            return commentMapper.toDto(updateCommentEntity);
+        }
     }
-}
 

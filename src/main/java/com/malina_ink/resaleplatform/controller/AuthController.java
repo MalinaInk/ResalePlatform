@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.malina_ink.resaleplatform.enums.Role.USER;
 
 @Slf4j
-@CrossOrigin(value = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {

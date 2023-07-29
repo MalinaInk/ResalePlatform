@@ -1,10 +1,7 @@
 package com.malina_ink.resaleplatform.service.impl;
 
 import com.malina_ink.resaleplatform.exception.PhotoUploadException;
-import com.malina_ink.resaleplatform.repository.AdRepository;
-import com.malina_ink.resaleplatform.repository.UserRepository;
 import com.malina_ink.resaleplatform.service.ImageService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,9 +20,6 @@ import java.util.UUID;
 @Transactional
 public class ImageServiceImpl implements ImageService {
 
-    private final ImageService imageRepository;
-    private final UserRepository userRepository;
-    private final AdRepository adRepository;
     @Value("${path.to.upload.user.image:src/main/resources/uploads/users/}")
     private String userpicPath;
 
@@ -33,10 +27,7 @@ public class ImageServiceImpl implements ImageService {
     private String adpicPath;
 
 
-    public ImageServiceImpl(ImageService imageRepository, UserRepository userRepository, AdRepository adRepository) {
-        this.imageRepository = imageRepository;
-        this.userRepository = userRepository;
-        this.adRepository = adRepository;
+    public ImageServiceImpl() {
     }
 
     private String saveImage(MultipartFile file, String fileName) throws PhotoUploadException {

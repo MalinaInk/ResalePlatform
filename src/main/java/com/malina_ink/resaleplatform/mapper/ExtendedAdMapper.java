@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 public class ExtendedAdMapper {
     public ExtendedAdDto toDto(Ad ad) {
         ExtendedAdDto dto = new ExtendedAdDto();
-        dto.setPk(ad.getPk());
-        dto.setAuthorFirstName(ad.getUser().getFirstname());
-        dto.setAuthorLastName(ad.getUser().getLastName());
+        dto.setPk(ad.getId());
+        dto.setAuthorFirstName(ad.getAuthor().getFirstname());
+        dto.setAuthorLastName(ad.getAuthor().getLastName());
         dto.setDescription(ad.getDescription());
         dto.setPrice(ad.getPrice());
         dto.setTitle(ad.getTitle());
         dto.setImage(ad.getAdImage());
-        dto.setEmail(ad.getUser().getEmail());
-        dto.setPhone(ad.getUser().getPhone());
+        dto.setEmail(ad.getAuthor().getEmail());
+        dto.setPhone(ad.getAuthor().getPhone());
         return dto;
     }
 }

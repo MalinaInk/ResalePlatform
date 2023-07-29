@@ -16,14 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@CrossOrigin(value = "http://localhost:8080")
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
 public class UsersController {
-    private final UserService userService;
+    private final UserService userServiceImpl;
 
-    public UsersController(UserService userService) {
-        this.userService = userService;
+    public UsersController(UserService userServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
     }
 
     /**
@@ -50,7 +50,7 @@ public class UsersController {
             })
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> updatePassword(@RequestBody NewPasswordDto newPasswordDto, Authentication authentication) {
-        userService.setNewPassword(newPasswordDto, authentication);
+        userServiceImpl.setNewPassword(newPasswordDto, authentication);
         return ResponseEntity.ok().build();
     }
 
@@ -78,7 +78,7 @@ public class UsersController {
             })
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> readUser(@PathVariable Integer id, Authentication authentication) {
-        return ResponseEntity.ok(userService.getUser(id, authentication));
+        return ResponseEntity.ok(userServiceImpl.getUser(id, authentication));
     }
 
     /**
@@ -107,7 +107,7 @@ public class UsersController {
             })
     @PutMapping("/me")
     public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUser, Authentication authentication) {
-        return ResponseEntity.ok(userService.updateUser(updateUser, authentication));
+        return ResponseEntity.ok(userServiceImpl.updateUser(updateUser, authentication));
     }
 
     @Operation(
@@ -134,7 +134,7 @@ public class UsersController {
 
     @PutMapping("/me/image")
     public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image, Authentication authentication) throws IOException {
-        userService.updateUserImage(image, authentication);
+        userServiceImpl.updateUserImage(image, authentication);
         return ResponseEntity.ok().build();
     }
 }

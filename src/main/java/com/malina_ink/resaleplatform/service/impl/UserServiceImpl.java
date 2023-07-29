@@ -7,6 +7,7 @@ import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.enums.Role;
 import com.malina_ink.resaleplatform.mapper.UserMapper;
 import com.malina_ink.resaleplatform.repository.UserRepository;
+import com.malina_ink.resaleplatform.service.ImageService;
 import com.malina_ink.resaleplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
      */
     private final UserMapper userMapper;
 
-    private final ImageServiceImpl imageService;
+    private final ImageService imageService;
 
     /**
      * Обновление пароля пользователя

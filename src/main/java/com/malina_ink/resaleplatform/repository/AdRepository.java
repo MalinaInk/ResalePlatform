@@ -1,7 +1,6 @@
 package com.malina_ink.resaleplatform.repository;
 
 import com.malina_ink.resaleplatform.entity.Ad;
-import com.malina_ink.resaleplatform.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

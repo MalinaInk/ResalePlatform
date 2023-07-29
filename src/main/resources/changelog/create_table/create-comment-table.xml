@@ -26,6 +26,12 @@
             <column name="text" type="TEXT">
             </column>
 
+            <column name="author_id" type="INTEGER">
+            </column>
+
+            <column name="ad_id" type="INTEGER">
+            </column>
+
         </createTable>
 
         <addForeignKeyConstraint baseTableName="comment" baseColumnNames="author_id" constraintName="FK_COMMENT_USER_ID" referencedTableName="user"

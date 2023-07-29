@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 public class AdMapper {
     public AdDto toDto(Ad ad) {
         AdDto dto = new AdDto();
-        dto.setAuthor(ad.getUser().getId());
+        dto.setAuthor(ad.getAuthor().getId());
         dto.setImage(ad.getAdImage());
-        dto.setPk(ad.getPk());
+        dto.setPk(ad.getId());
         dto.setPrice(ad.getPrice());
         dto.setTitle(ad.getTitle());
         return dto;
@@ -25,9 +25,9 @@ public class AdMapper {
         User user = new User();
         user.setId(dto.getAuthor());
 
-        ad.setUser(user);
+        ad.setAuthor(user);
         ad.setAdImage(dto.getImage());
-        ad.setPk(dto.getPk());
+        ad.setId(dto.getPk());
         ad.setPrice(dto.getPrice());
         ad.setTitle(dto.getTitle());
         return ad;

@@ -1,6 +1,6 @@
 package com.malina_ink.resaleplatform.controller;
 
-import com.malina_ink.resaleplatform.service.impl.AdServiceImpl;
+import com.malina_ink.resaleplatform.service.AdService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@CrossOrigin(value = "http://localhost:8080")
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
 public class ImageController {
-    private AdServiceImpl adService;
+    private AdService adService;
 
-    public ImageController(AdServiceImpl adService) {
+    public ImageController(AdService adService) {
         this.adService = adService;
     }
 

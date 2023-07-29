@@ -3,8 +3,8 @@ package com.malina_ink.resaleplatform.controller;
 import com.malina_ink.resaleplatform.dto.*;
 import com.malina_ink.resaleplatform.repository.AdRepository;
 import com.malina_ink.resaleplatform.repository.CommentRepository;
-import com.malina_ink.resaleplatform.service.impl.AdServiceImpl;
-import com.malina_ink.resaleplatform.service.impl.CommentServiceImpl;
+import com.malina_ink.resaleplatform.service.AdService;
+import com.malina_ink.resaleplatform.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,20 +21,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
-@CrossOrigin(value = "http://localhost:8080")
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
 public class AdsController {
-    private final AdServiceImpl adsService;
-    private final CommentServiceImpl commentService;
-    private final AdRepository adRepository;
-    private final CommentRepository commentRepository;
+    private final AdService adsService;
+    private final CommentService commentService;
 
-    public AdsController(AdServiceImpl adsService, CommentServiceImpl commentService, AdRepository adRepository, CommentRepository commentRepository) {
+    public AdsController(AdService adsService, CommentService commentService, AdRepository adRepository, CommentRepository commentRepository) {
         this.adsService = adsService;
         this.commentService = commentService;
-        this.adRepository = adRepository;
-        this.commentRepository = commentRepository;
     }
 
 
