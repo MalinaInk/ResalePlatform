@@ -5,6 +5,7 @@ import com.malina_ink.resaleplatform.dto.AdDto;
 import com.malina_ink.resaleplatform.dto.AdsDto;
 import com.malina_ink.resaleplatform.dto.CreateOrUpdateAdDto;
 import com.malina_ink.resaleplatform.dto.ExtendedAdDto;
+import com.malina_ink.resaleplatform.service.impl.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +19,7 @@ public interface AdService {
      * @param authentication объект аутентификации пользователя, создающего объявление
      * @return AdsDto объект, представляющий созданное объявление
      */
-    AdDto createAds(CreateOrUpdateAdDto createAds, MultipartFile image, Authentication authentication);
+    AdDto createAds(CreateOrUpdateAdDto createAds, MultipartFile image, UserPrincipal principal);
 
     /**
      * Обновляет объявление с указанным идентификатором с помощью переданных свойств.
@@ -27,7 +28,7 @@ public interface AdService {
      * @param createAds объект CreateOrUpdateAdDto, содержащий новые свойства объявления
      * @return AdsDto объект, представляющий обновленное объявление
      */
-    AdDto updateAds(CreateOrUpdateAdDto createAds, Integer adsId);
+    AdDto updateAds(CreateOrUpdateAdDto createAds, Integer adsId, UserPrincipal userPrincipal);
 
     /**
      * Обновляет изображение объявления с указанным идентификатором.
@@ -35,7 +36,7 @@ public interface AdService {
      * @param adsId    идентификатор объявления, для которого нужно обновить изображение
      * @param image новый файл изображения
      */
-    String updateImage(Integer adsId, MultipartFile image);
+    String updateImage(Integer adsId, MultipartFile image, UserPrincipal principal);
 
     /**
      * Возвращает список всех объявлений в виде объекта AdsDto.
@@ -50,7 +51,7 @@ public interface AdService {
      * @param authentication объект аутентификации текущего пользователя
      * @return объект AdsDto, содержащий список всех объявлений, созданных текущим пользователем
      */
-    AdsDto getAdsMe(Integer id, Authentication authentication);
+    AdsDto getAdsMe(Integer id, UserPrincipal principal);
 
     /**
      * Возвращает объявление с указанным идентификатором в виде объекта FullAdsDto.
@@ -65,5 +66,5 @@ public interface AdService {
      *
      * @param adsId идентификатор объявления для удаления
      */
-    void deleteAds(Integer adsId);
+    void deleteAds(Integer adsId, UserPrincipal principal);
 }

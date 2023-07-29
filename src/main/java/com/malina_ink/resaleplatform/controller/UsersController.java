@@ -4,12 +4,14 @@ import com.malina_ink.resaleplatform.dto.NewPasswordDto;
 import com.malina_ink.resaleplatform.dto.UpdateUserDto;
 import com.malina_ink.resaleplatform.dto.UserDto;
 import com.malina_ink.resaleplatform.service.UserService;
+import com.malina_ink.resaleplatform.service.impl.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +21,7 @@ import java.io.IOException;
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
+@PreAuthorize("isAuthenticated()")
 public class UsersController {
     private final UserService userServiceImpl;
 
@@ -50,7 +53,8 @@ public class UsersController {
             })
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> updatePassword(@RequestBody NewPasswordDto newPasswordDto, Authentication authentication) {
-        userServiceImpl.setNewPassword(newPasswordDto, authentication);
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        userServiceImpl.setNewPassword(newPasswordDto, principal);
         return ResponseEntity.ok().build();
     }
 
@@ -78,7 +82,8 @@ public class UsersController {
             })
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> readUser(@PathVariable Integer id, Authentication authentication) {
-        return ResponseEntity.ok(userServiceImpl.getUser(id, authentication));
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        return ResponseEntity.ok(userServiceImpl.getUser(id, principal));
     }
 
     /**
@@ -107,7 +112,8 @@ public class UsersController {
             })
     @PutMapping("/me")
     public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUser, Authentication authentication) {
-        return ResponseEntity.ok(userServiceImpl.updateUser(updateUser, authentication));
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        return ResponseEntity.ok(userServiceImpl.updateUser(updateUser, principal));
     }
 
     @Operation(
@@ -134,7 +140,8 @@ public class UsersController {
 
     @PutMapping("/me/image")
     public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image, Authentication authentication) throws IOException {
-        userServiceImpl.updateUserImage(image, authentication);
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        userServiceImpl.updateUserImage(image, principal);
         return ResponseEntity.ok().build();
     }
 }

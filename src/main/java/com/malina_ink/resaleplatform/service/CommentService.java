@@ -3,6 +3,7 @@ package com.malina_ink.resaleplatform.service;
 import com.malina_ink.resaleplatform.dto.CommentDto;
 import com.malina_ink.resaleplatform.dto.CommentsDto;
 import com.malina_ink.resaleplatform.dto.CreateOrUpdateCommentDto;
+import com.malina_ink.resaleplatform.service.impl.UserPrincipal;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.Authentication;
 
@@ -17,11 +18,11 @@ public interface CommentService {
      *
      * @param adsId               идентификатор объявления.
      * @param createComment данные для создания комментария.
-     * @param authentication   данные аутентификации пользователя.
+     * @param userPrincipal   данные аутентификации пользователя.
      * @return Добавленный комментарий в формате CommentDto.
 //     * @throws IncorrectArgumentException если текст комментария пустой.
      */
-    CommentDto addComment(@NotNull Integer adsId, CreateOrUpdateCommentDto createComment, Authentication authentication);
+    CommentDto addComment(@NotNull Integer adsId, CreateOrUpdateCommentDto createComment, UserPrincipal userPrincipal);
 
 
     /**
@@ -30,7 +31,7 @@ public interface CommentService {
 //     * @param Id      идентификатор объявления.
      * @param commentId идентификатор комментария.
      */
-    void deleteComment(Integer commentId);
+    void deleteComment(Integer commentId, UserPrincipal principal);
 
     /**
      * Метод для получения списка комментариев по идентификатору объявления.
@@ -49,6 +50,6 @@ public interface CommentService {
      * @return Обновленный комментарий в формате CommentDto, если обновление прошло успешно, иначе - null.
 //     * @throws IncorrectArgumentException если текст комментария пустой.
      */
-    CommentDto updateComment(Integer adsId, @NotNull Integer commentId, CreateOrUpdateCommentDto comment);
+    CommentDto updateComment(Integer adsId, @NotNull Integer commentId, CreateOrUpdateCommentDto comment, UserPrincipal principal);
 }
 

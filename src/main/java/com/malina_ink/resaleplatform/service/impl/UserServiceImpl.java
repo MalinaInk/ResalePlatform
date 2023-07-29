@@ -49,13 +49,13 @@ public class UserServiceImpl implements UserService {
      * Обновление пароля пользователя
      *
      * @param newPassword    новый пароль
-     * @param authentication авторизованный пользователь
+     * @param principal авторизованный пользователь
      * @return новый пароль для авторизованного пользователя
      */
     @Override
-    public void setNewPassword(NewPasswordDto newPassword, Authentication authentication) {
+    public void setNewPassword(NewPasswordDto newPassword, UserPrincipal principal) {
         logger.info("Вызван метод обновления пароля пользователя");
-        User user = userRepository.getUserByEmailIgnoreCase(authentication.getName()).orElseThrow(RuntimeException::new);
+        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow(RuntimeException::new);
         user.setPassword(newPassword.getNewPassword());
         userRepository.save(user);
         userMapper.toDto(user);
@@ -64,26 +64,26 @@ public class UserServiceImpl implements UserService {
     /**
      * Получение информации об авторизованном пользователе
      *
-     * @param authentication авторизованный пользователь
+     * @param principal авторизованный пользователь
      * @return информацию об авторизованном пользователе
      */
     @Override
-    public UserDto getUser(Integer userId, Authentication authentication) {
+    public UserDto getUser(Integer userId, UserPrincipal principal) {
         logger.info("Вызван метод получения информации об авторизованном пользователе");
-        return userMapper.toDto(userRepository.getUserByEmailIgnoreCase(authentication.getName()).orElseThrow());
+        return userMapper.toDto(userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow());
     }
 
     /**
      * Обновить информацию об авторизованном пользователе
      *
      * @param user           пользователь
-     * @param authentication авторизованный пользователь
+     * @param principal авторизованный пользователь
      * @return обновленную информацию об авторизованном пользователе
      */
     @Override
-    public UserDto updateUser(UpdateUserDto user, Authentication authentication) {
+    public UserDto updateUser(UpdateUserDto user, UserPrincipal principal) {
         logger.info("Вызван метод обновления информации об авторизованном пользователе");
-        User userEntity = userRepository.getUserByEmailIgnoreCase(authentication.getName()).orElseThrow();//сделать исключение
+        User userEntity = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow();//сделать исключение
         userEntity.setFirstname(user.getFirstName());
         userEntity.setLastName(user.getLastName());
         userEntity.setPhone(user.getPhone());
@@ -108,12 +108,12 @@ public class UserServiceImpl implements UserService {
      * Обновить аватар авторизованного пользователя
      *
      * @param image          аватар авторизованного пользователя
-     * @param authentication авторизованный пользователь
+     * @param principal авторизованный пользователь
      */
     @Override
-    public void updateUserImage(MultipartFile image, Authentication authentication) throws IOException {
+    public void updateUserImage(MultipartFile image, UserPrincipal principal) throws IOException {
         logger.info("Вызван метод обновления аватара авторизованного пользователя");
-        User user = userRepository.getUserByEmailIgnoreCase(authentication.getName()).orElseThrow(); // сделать исключение
+        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow(); // сделать исключение
         String imageUser = imageService.uploadUserImage(image, user.getId());
         user.setImage(imageUser);;
         userRepository.save(user);

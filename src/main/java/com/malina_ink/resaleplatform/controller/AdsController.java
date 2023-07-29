@@ -5,6 +5,7 @@ import com.malina_ink.resaleplatform.repository.AdRepository;
 import com.malina_ink.resaleplatform.repository.CommentRepository;
 import com.malina_ink.resaleplatform.service.AdService;
 import com.malina_ink.resaleplatform.service.CommentService;
+import com.malina_ink.resaleplatform.service.impl.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
+@PreAuthorize("isAuthenticated()")
 public class AdsController {
     private final AdService adsService;
     private final CommentService commentService;
@@ -96,7 +99,8 @@ public class AdsController {
     public ResponseEntity<CommentDto> createComment(@PathVariable int id,
                                                                   @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto,
                                                                   @NonNull Authentication authentication) {
-        return ResponseEntity.ok(commentService.addComment(id, createOrUpdateCommentDto, authentication));
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        return ResponseEntity.ok(commentService.addComment(id, createOrUpdateCommentDto, principal));
     }
 
 
@@ -133,8 +137,11 @@ public class AdsController {
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable int adId,
                                                                   @PathVariable int commentId,
-                                                                  @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto) {
-        return ResponseEntity.ok(commentService.updateComment(adId, commentId, createOrUpdateCommentDto));
+                                                                  @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto,
+                                                    Authentication authentication) {
+        //проверяем роль для доступа к опции
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        return ResponseEntity.ok(commentService.updateComment(adId, commentId, createOrUpdateCommentDto, principal));
     }
 
 
@@ -164,8 +171,10 @@ public class AdsController {
                     )
             })
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable int adId, @PathVariable int commentId) {
-        commentService.deleteComment(commentId);
+    public ResponseEntity<?> deleteComment(@PathVariable int adId, @PathVariable int commentId, Authentication authentication) {
+        //проверяем роль для доступа к опции
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        commentService.deleteComment(commentId, principal);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -188,6 +197,7 @@ public class AdsController {
                     )
             })
     @GetMapping
+    @PreAuthorize("permitAll()")
     public ResponseEntity<AdsDto> readAllAds(@RequestParam(required = false) String title) {
         return ResponseEntity.ok(adsService.getAllAds(title));
     }
@@ -253,7 +263,8 @@ public class AdsController {
     public ResponseEntity<AdDto> createAd(@RequestPart("properties") @NotNull CreateOrUpdateAdDto createOrUpdateAdDto,
                                                         @RequestPart MultipartFile image,
                                                         @NonNull Authentication authentication) {
-        return ResponseEntity.ok(adsService.createAds(createOrUpdateAdDto, image, authentication));
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        return ResponseEntity.ok(adsService.createAds(createOrUpdateAdDto, image, principal));
     }
 
 
@@ -292,10 +303,14 @@ public class AdsController {
                     )
             })
 
+
     @PatchMapping("/{id}")
     public ResponseEntity<AdDto> updateAds(@PathVariable int id,
-                                                         @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto) {
-        return ResponseEntity.ok(adsService.updateAds(createOrUpdateAdDto, id));
+                                                         @RequestBody CreateOrUpdateAdDto createOrUpdateAdDto,
+                                           Authentication authentication) {
+        //проверяем роль для доступа к опции
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        return ResponseEntity.ok(adsService.updateAds(createOrUpdateAdDto, id, principal));
     }
 
 
@@ -329,8 +344,10 @@ public class AdsController {
             })
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAd(@PathVariable Integer id) {
-        adsService.deleteAds(id);
+    public ResponseEntity<?> deleteAd(@PathVariable Integer id, Authentication authentication) {
+        //проверяем роль для доступа к опции
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        adsService.deleteAds(id, principal);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -358,7 +375,8 @@ public class AdsController {
 
     @GetMapping("/me")
     public ResponseEntity<AdsDto> getAdsMe(Integer id, Authentication authentication) {
-       return ResponseEntity.ok(adsService.getAdsMe(id, authentication));
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        return ResponseEntity.ok(adsService.getAdsMe(id, principal));
     }
 }
 

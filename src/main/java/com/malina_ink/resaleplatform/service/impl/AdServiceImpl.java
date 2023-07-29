@@ -3,6 +3,7 @@ package com.malina_ink.resaleplatform.service.impl;
 import com.malina_ink.resaleplatform.dto.*;
 import com.malina_ink.resaleplatform.entity.Ad;
 import com.malina_ink.resaleplatform.entity.User;
+import com.malina_ink.resaleplatform.enums.Role;
 import com.malina_ink.resaleplatform.exception.AccessErrorException;
 import com.malina_ink.resaleplatform.exception.NotCorrectCostException;
 import com.malina_ink.resaleplatform.exception.ObjectAbsenceException;
@@ -60,11 +61,11 @@ public class AdServiceImpl implements AdService {
      *
      * @param createAds      данные объявления
      * @param image          картинка объявления
-     * @param authentication авторизованный пользователь
+     * @param principal авторизованный пользователь
      * @return добавленное новое объявление
      */
     @Override
-    public AdDto createAds(CreateOrUpdateAdDto createAds, MultipartFile image, Authentication authentication) {
+    public AdDto createAds(CreateOrUpdateAdDto createAds, MultipartFile image, UserPrincipal principal) {
         if (createAds.getPrice() < 0) {
             throw new IllegalArgumentException("Цена должна быть больше 0!");
         }
@@ -74,7 +75,7 @@ public class AdServiceImpl implements AdService {
         adsEntity.setTitle(createAds.getTitle());
         adsEntity.setPrice(createAds.getPrice());
         adsEntity.setDescription(createAds.getDescription());
-        User author = userRepository.getUserByEmailIgnoreCase(authentication.getName()).orElseThrow(RuntimeException::new); //сделать свое исключение
+        User author = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow(RuntimeException::new); //сделать свое исключение
         adsEntity.setAuthor(author);
         adRepository.save(adsEntity);
 
@@ -107,13 +108,16 @@ public class AdServiceImpl implements AdService {
      * @param adsId идентификатор объявления, не может быть null
      */
     @Override
-    public void deleteAds(Integer adsId, Authentication authentication) {
+    public void deleteAds(Integer adsId, UserPrincipal userPrincipal) {
         log.info("Вызван метод удаления объявления по идентификатору (id)");
-        //проверка на авторство редактируемого/удаляемого
+
+        //проверка на авторство редактируемого
         Ad updateAd = adRepository.findById(adsId).orElseThrow(RuntimeException::new);
-        if (!Objects.equals(authentication.getName(), updateAd.getAuthor())) {
+        User user = userRepository.getUserByEmailIgnoreCase(userPrincipal.getUsername()).orElseThrow();
+        if (user.getId() != updateAd.getAuthor().getId() && !user.getRole().equals(Role.ADMIN)) {
             throw new AccessErrorException("У вас нет прав на данную операцию");
         }
+
         adRepository.deleteById(adsId);
     }
 
@@ -125,7 +129,7 @@ public class AdServiceImpl implements AdService {
      * @return возвращает обновленное объявление по идентификатору (id)
      */
     @Override
-    public AdDto updateAds(CreateOrUpdateAdDto createAds, Integer adsId, Authentication authentication) {
+    public AdDto updateAds(CreateOrUpdateAdDto createAds, Integer adsId, UserPrincipal userPrincipal) {
         if (adsId == null) {
             throw new ObjectAbsenceException("Такого объявления не существует!");
         }
@@ -136,7 +140,8 @@ public class AdServiceImpl implements AdService {
 
         //проверка на авторство редактируемого
         Ad updateAd = adRepository.findById(adsId).orElseThrow(RuntimeException::new);
-        if (!Objects.equals(authentication.getName(), updateAd.getAuthor())) {
+        User user = userRepository.getUserByEmailIgnoreCase(userPrincipal.getUsername()).orElseThrow();
+        if (user.getId() != updateAd.getAuthor().getId() && !user.getRole().equals(Role.ADMIN)) {
             throw new AccessErrorException("У вас нет прав на данную операцию");
         }
 
@@ -152,14 +157,14 @@ public class AdServiceImpl implements AdService {
     /**
      * Получение объявлений авторизованного пользователя, хранящихся в базе данных
      *
-     * @param authentication авторизованный пользователь
+     * @param principal авторизованный пользователь
      * @return возвращает все объявления авторизованного пользователя
      */
     @Override
-    public AdsDto getAdsMe(Integer id, Authentication authentication) {
+    public AdsDto getAdsMe(Integer id, UserPrincipal principal) {
         log.info("Вызван метод получения объявлений авторизованного пользователя");
         return adMapper.toAdsDto(
-                adRepository.findAllByAuthorIdOrderByIdDesc(userService.getUser(id, authentication).getId())
+                adRepository.findAllByAuthorIdOrderByIdDesc(userService.getUser(id, principal).getId())
         );
     }
 
@@ -171,14 +176,20 @@ public class AdServiceImpl implements AdService {
      * @return объявление с новой картинкой
      */
     @Override
-    public String updateImage(Integer adsId, MultipartFile image) {
+    @Transactional
+    public String updateImage(Integer adsId, MultipartFile image, UserPrincipal principal) {
         log.info("Вызван метод обновления картинки объявления");
         if (adsId == null) {
             throw new ObjectAbsenceException("Такого объявления не существует!");
         }
-        Ad updateAd = adRepository.findById(adsId).orElseThrow(RuntimeException::new);
-        imageService.deleteImage(updateAd.getAdImage());
 
+        //проверка на авторство редактируемого
+        Ad updateAd = adRepository.findById(adsId).orElseThrow(RuntimeException::new);
+        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow();
+        if (user.getId() != updateAd.getAuthor().getId() && !user.getRole().equals(Role.ADMIN)) {
+            throw new AccessErrorException("У вас нет прав на данную операцию");
+        }
+        String oldImage = updateAd.getAdImage();
         try {
             String filePath = imageService.uploadAdImage(image, adsId);
             updateAd.setAdImage(filePath);
@@ -186,6 +197,7 @@ public class AdServiceImpl implements AdService {
         } catch (IOException e) {
             throw new RuntimeException("Ошибка при загрузке фото");
         }
+        imageService.deleteImage(oldImage);
         return updateAd.getAdImage();
     }
 }
