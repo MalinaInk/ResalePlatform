@@ -27,7 +27,7 @@ public interface UserService {
      * @param principal данные аутентификации текущего пользователя
      * @return данные текущего пользователя в виде объекта UserDto
      */
-    UserDto getUser(Integer userId, UserPrincipal principal);
+    UserDto getUser(UserPrincipal principal);
 
     /**
      * Обновляет данные текущего пользователя.

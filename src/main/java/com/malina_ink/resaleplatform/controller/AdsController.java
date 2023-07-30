@@ -374,9 +374,9 @@ public class AdsController {
             })
 
     @GetMapping("/me")
-    public ResponseEntity<AdsDto> getAdsMe(Integer id, Authentication authentication) {
+    public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
-        return ResponseEntity.ok(adsService.getAdsMe(id, principal));
+        return ResponseEntity.ok(adsService.getAdsMe(principal));
     }
 }
 

@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
      * @return информацию об авторизованном пользователе
      */
     @Override
-    public UserDto getUser(Integer userId, UserPrincipal principal) {
+    public UserDto getUser(UserPrincipal principal) {
         logger.info("Вызван метод получения информации об авторизованном пользователе");
         return userMapper.toDto(userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow());
     }

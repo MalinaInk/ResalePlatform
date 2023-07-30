@@ -16,7 +16,7 @@ public interface AdService {
     /**
      * @param image          файл изображения для объявления
      * @param createAds      объект CreateOrUpdateAdDto, содержащий свойства объявления
-     * @param authentication объект аутентификации пользователя, создающего объявление
+     * @param principal объект аутентификации пользователя, создающего объявление
      * @return AdsDto объект, представляющий созданное объявление
      */
     AdDto createAds(CreateOrUpdateAdDto createAds, MultipartFile image, UserPrincipal principal);
@@ -48,10 +48,10 @@ public interface AdService {
     /**
      * Возвращает список всех объявлений, созданных текущим пользователем, в виде объекта AdsDto.
      *
-     * @param authentication объект аутентификации текущего пользователя
+     * @param principal объект аутентификации текущего пользователя
      * @return объект AdsDto, содержащий список всех объявлений, созданных текущим пользователем
      */
-    AdsDto getAdsMe(Integer id, UserPrincipal principal);
+    AdsDto getAdsMe(UserPrincipal principal);
 
     /**
      * Возвращает объявление с указанным идентификатором в виде объекта FullAdsDto.

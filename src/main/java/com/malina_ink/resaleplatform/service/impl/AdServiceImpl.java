@@ -161,10 +161,10 @@ public class AdServiceImpl implements AdService {
      * @return возвращает все объявления авторизованного пользователя
      */
     @Override
-    public AdsDto getAdsMe(Integer id, UserPrincipal principal) {
+    public AdsDto getAdsMe(UserPrincipal principal) {
         log.info("Вызван метод получения объявлений авторизованного пользователя");
         return adMapper.toAdsDto(
-                adRepository.findAllByAuthorIdOrderByIdDesc(userService.getUser(id, principal).getId())
+                adRepository.findAllByAuthorIdOrderByIdDesc(userService.getUser(principal).getId())
         );
     }
 

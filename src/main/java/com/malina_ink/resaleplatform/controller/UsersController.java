@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@CrossOrigin(value = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
 @RestController
 @RequestMapping("/users")
 @PreAuthorize("isAuthenticated()")
@@ -80,10 +80,10 @@ public class UsersController {
                     )
 
             })
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> readUser(@PathVariable Integer id, Authentication authentication) {
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> readUser(Authentication authentication) {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
-        return ResponseEntity.ok(userServiceImpl.getUser(id, principal));
+        return ResponseEntity.ok(userServiceImpl.getUser(principal));
     }
 
     /**
