@@ -3,10 +3,12 @@ package com.malina_ink.resaleplatform.service.impl;
 import com.malina_ink.resaleplatform.dto.RegisterDto;
 import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.enums.Role;
+import com.malina_ink.resaleplatform.exception.UserAlreadyExistException;
 import com.malina_ink.resaleplatform.repository.UserRepository;
 import com.malina_ink.resaleplatform.service.AuthService;
 import com.malina_ink.resaleplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
   private final UserDetailsManager manager;
@@ -44,18 +47,18 @@ public class AuthServiceImpl implements AuthService {
 //            .username(registerDto.getUsername())
 //            .roles(role.name())
 //
-    if (manager.loadUserByUsername(registerDto.getUsername()) != null) {
+    if (manager.userExists(registerDto.getUsername())) {
       return false;
     }
     User user = new User();
-    user.setRole(registerDto.getRole());
-    user.setEmail(registerDto.getUsername());
-    user.setPassword(registerDto.getPassword());
-    user.setPhone(registerDto.getPhone());
-    user.setFirstname(registerDto.getFirstName());
+    user.setUsername(registerDto.getFirstName());
     user.setLastName(registerDto.getLastName());
-    user.setUsername(registerDto.getUsername());
+    user.setEmail(registerDto.getUsername());
+    user.setPassword(encoder.encode(registerDto.getPassword()));
+    user.setPhone(registerDto.getPhone());
+    user.setRole(registerDto.getRole());
     userRepository.save(user);
+    log.debug("User successfully created = {}", user);
     return true;
   }
 }

@@ -110,7 +110,8 @@ public class UsersController {
                     )
 
             })
-    @PutMapping("/me")
+
+    @PatchMapping("/me")
     public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUser, Authentication authentication) {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         return ResponseEntity.ok(userServiceImpl.updateUser(updateUser, principal));
@@ -138,7 +139,7 @@ public class UsersController {
      * @return обновленный аватар авторизованного пользователя
      */
 
-    @PutMapping("/me/image")
+    @PatchMapping("/me/image")
     public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image, Authentication authentication) throws IOException {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         userServiceImpl.updateUserImage(image, principal);

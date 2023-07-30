@@ -43,8 +43,8 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public String uploadUserImage(MultipartFile file, Integer userId) throws PhotoUploadException {
         log.info("Вызван метод загрузки аватара пользователя");
-        String extension = StringUtils.getFilenameExtension(file.getName());
-
+        createUploadDir(userpicPath + "/" + userId);
+        String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         String fileName = userpicPath + "/" + userId + "/" + UUID.randomUUID().toString() + "." + extension;
         return saveImage(file, fileName);
     }
@@ -52,7 +52,8 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public String uploadAdImage(MultipartFile file, Integer adId) throws PhotoUploadException {
         log.info("Вызван метод загрузки картинки объявления");
-        String extension = StringUtils.getFilenameExtension(file.getName());
+        createUploadDir(adpicPath + "/" + adId);
+        String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         String fileName = adpicPath + "/" + adId + "/" + UUID.randomUUID().toString() + "." + extension;
         return saveImage(file, fileName);
     }
@@ -63,6 +64,16 @@ public class ImageServiceImpl implements ImageService {
         File file = new File(path);
         if (file.exists()) {
             file.delete();
+        }
+    }
+
+    private void createUploadDir(String path) {
+        try {
+            if (!Files.exists(Paths.get(path))) {
+                Files.createDirectories(Paths.get(path));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

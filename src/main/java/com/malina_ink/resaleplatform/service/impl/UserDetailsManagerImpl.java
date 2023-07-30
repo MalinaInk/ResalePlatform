@@ -5,37 +5,39 @@ import com.malina_ink.resaleplatform.dto.UserDetailsDto;
 import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.exception.UserAlreadyExistException;
 import com.malina_ink.resaleplatform.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-@Service
+//@Service("userDetailsService")
+@Component
 @Transactional
-public class UserDetailsManagerImpl implements UserDetailsService {
+@RequiredArgsConstructor
+public class UserDetailsManagerImpl implements UserDetailsService, UserDetailsManager {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
-
-    public UserDetailsManagerImpl(UserRepository userRepository, PasswordEncoder encoder) {
-        this.userRepository = userRepository;
-        this.encoder = encoder;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.getUserByEmailIgnoreCase(username).orElseThrow();
         UserDetailsDto userDetailsDto = new UserDetailsDto(
-                user.getUsername(),
+                user.getEmail(),
                 user.getPassword(),
                 user.getId(),
-                user.getRole()
+                user.getRole(),
+                user.getUsername()
         );
         return new UserPrincipal(userDetailsDto);
     }
+
     public void createUser(RegisterDto registerDto) {
         if (userRepository.existsByEmailIgnoreCase(registerDto.getUsername())) {
             throw new UserAlreadyExistException("User already exist");
@@ -52,5 +54,30 @@ public class UserDetailsManagerImpl implements UserDetailsService {
         log.debug("User successfully created = {}", user);
     }
 
+
+    @Override
+    public void createUser(UserDetails user) {
+
+    }
+
+    @Override
+    public void updateUser(UserDetails user) {
+
+    }
+
+    @Override
+    public void deleteUser(String username) {
+
+    }
+
+    @Override
+    public void changePassword(String oldPassword, String newPassword) {
+
+    }
+
+    @Override
+    public boolean userExists(String username) {
+        return userRepository.getUserByEmailIgnoreCase(username).isPresent();
+    }
 
 }

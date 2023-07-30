@@ -62,7 +62,7 @@ public class AdsController {
                             description = "NotFound"
                     )
             })
-    @GetMapping("/{id}/comment")
+    @GetMapping("/{id}/comments")
     public ResponseEntity<CommentsDto> readComments(@PathVariable Integer id) {
         return ResponseEntity.ok(commentService.getComments(id));
     }
@@ -95,7 +95,7 @@ public class AdsController {
                             description = "NotFound"
                     )
             })
-    @PostMapping("/{id}/comment")
+    @PostMapping("/{id}/comments")
     public ResponseEntity<CommentDto> createComment(@PathVariable int id,
                                                                   @RequestBody CreateOrUpdateCommentDto createOrUpdateCommentDto,
                                                                   @NonNull Authentication authentication) {
