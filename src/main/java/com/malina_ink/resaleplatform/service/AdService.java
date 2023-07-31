@@ -67,4 +67,6 @@ public interface AdService {
      * @param adsId идентификатор объявления для удаления
      */
     void deleteAds(Integer adsId, UserPrincipal principal);
+
+    byte[] getImage(Integer id);
 }

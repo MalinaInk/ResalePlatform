@@ -10,4 +10,6 @@ public interface ImageService {
     String uploadAdImage(MultipartFile file, Integer adId) throws PhotoUploadException;
 
     void deleteImage(String path);
+
+    byte[] getImageBytes(String pathToFile);
 }

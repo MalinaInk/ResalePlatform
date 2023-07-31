@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -200,5 +202,19 @@ public class AdServiceImpl implements AdService {
         imageService.deleteImage(oldImage);
         return updateAd.getAdImage();
     }
+
+    /**
+     * Получить картинку объявления
+     *
+     * @param id идентификатор объявления
+     * @return массив байтов нужного файла
+     */
+
+    @Override
+    public byte[] getImage(Integer id) {
+        String pathToFile = adRepository.findById(id).orElseThrow().getAdImage();
+        return imageService.getImageBytes(pathToFile);
+    }
+
 }
 

@@ -44,12 +44,11 @@ public interface CommentService {
     /**
      * Метод для обновления комментария по идентификатору объявления и комментария.
      *
-     * @param adsId       идентификатор объявления.
      * @param commentId  идентификатор комментария.
      * @param comment данные для обновления комментария.
      * @return Обновленный комментарий в формате CommentDto, если обновление прошло успешно, иначе - null.
 //     * @throws IncorrectArgumentException если текст комментария пустой.
      */
-    CommentDto updateComment(Integer adsId, @NotNull Integer commentId, CreateOrUpdateCommentDto comment, UserPrincipal principal);
+    CommentDto updateComment(@NotNull Integer commentId, CreateOrUpdateCommentDto comment, UserPrincipal principal);
 }
 

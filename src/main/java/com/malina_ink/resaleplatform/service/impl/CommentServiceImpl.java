@@ -113,14 +113,13 @@ public class CommentServiceImpl implements CommentService {
      * @return возвращает измененный комментарий
      */
     @Override
-    public CommentDto updateComment(Integer adsId,
-                                    @NotNull Integer commentId,
+    public CommentDto updateComment(@NotNull Integer commentId,
                                     CreateOrUpdateCommentDto comment,
                                     UserPrincipal principal) {
         log.info("Вызван метод обновления комментария по идентификатору (id)");
 
         //проверка на авторство редактируемого
-        Comment updateComment = commentRepository.findById(adsId).orElseThrow(RuntimeException::new);
+        Comment updateComment = commentRepository.findById(commentId).orElseThrow(RuntimeException::new);
         User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow();
         if (user.getId() != updateComment.getUser().getId() && !user.getRole().equals(Role.ADMIN)) {
             throw new AccessErrorException("У вас нет прав на данную операцию");

@@ -2,6 +2,7 @@ package com.malina_ink.resaleplatform.controller;
 
 import com.malina_ink.resaleplatform.dto.NewPasswordDto;
 import com.malina_ink.resaleplatform.dto.UpdateUserDto;
+import com.malina_ink.resaleplatform.dto.UserDetailsDto;
 import com.malina_ink.resaleplatform.dto.UserDto;
 import com.malina_ink.resaleplatform.service.UserService;
 import com.malina_ink.resaleplatform.service.impl.UserPrincipal;

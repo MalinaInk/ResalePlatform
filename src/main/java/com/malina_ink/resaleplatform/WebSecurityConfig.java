@@ -59,8 +59,10 @@ public class WebSecurityConfig {
                         authz
                                 .requestMatchers(AUTH_WHITELIST)
                                 .permitAll()
-                                .requestMatchers(HttpMethod.GET, "/ads")
+                                .requestMatchers(HttpMethod.GET, "/ads", "/images/**")
                                 .permitAll()
+//                                .requestMatchers("/ad/*/image","/user/*/image", "/images/**")
+//                                .permitAll()
                                 .requestMatchers("/ads/**", "/users/**").authenticated()
                 )
                 .cors()

@@ -6,7 +6,6 @@ import com.malina_ink.resaleplatform.dto.UserDto;
 import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.enums.Role;
 import com.malina_ink.resaleplatform.service.impl.UserPrincipal;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -65,4 +64,7 @@ public interface UserService {
 //     * @throws UserNotFoundException если пользователь не найден в базе данных
      */
     User getUserByEmail(String email);
+
+    byte[] getImage(Integer id);
+
 }

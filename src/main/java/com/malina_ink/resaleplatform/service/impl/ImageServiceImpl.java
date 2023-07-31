@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static java.nio.file.Files.readAllBytes;
+
 @Slf4j
 @Service
 @Transactional
@@ -67,7 +69,23 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    @Override
+    public byte[] getImageBytes(String fileName) {
+        log.info("Вызван метод получения файла по пути {}", fileName);
+        File image;
+        byte[] outputFileBytes = null;
+        try {
+            image = new File(fileName);
+            outputFileBytes = readAllBytes(image.toPath());
+        } catch (IOException e) {
+            log.error("Не удалось получить файл по пути {}", fileName);
+        }
+        return outputFileBytes;
+    }
+
     private void createUploadDir(String path) {
+        log.info("Вызван метод создания директории по пути {}", path);
+
         try {
             if (!Files.exists(Paths.get(path))) {
                 Files.createDirectories(Paths.get(path));

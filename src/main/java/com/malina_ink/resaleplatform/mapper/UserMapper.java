@@ -13,7 +13,10 @@ public class UserMapper {
         dto.setFirstName(user.getFirstname());
         dto.setLastName(user.getLastName());
         dto.setPhone(user.getPhone());
-        dto.setImage(user.getImage());
+        dto.setRole(user.getRole().name());
+//        dto.setImage(user.getImage());
+//        dto.setImage(String.format("/users/%d/image", user.getId()));
+        dto.setImage(String.format("/images/user/%d/image", user.getId()));
         return dto;
     }
 
@@ -24,7 +27,7 @@ public class UserMapper {
         user.setFirstname(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setPhone(dto.getPhone());
-        user.setImage(dto.getImage());
+//        user.setImage(dto.getImage());
         return user;
     }
 }

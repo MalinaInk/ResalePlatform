@@ -141,7 +141,7 @@ public class AdsController {
                                                     Authentication authentication) {
         //проверяем роль для доступа к опции
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
-        return ResponseEntity.ok(commentService.updateComment(adId, commentId, createOrUpdateCommentDto, principal));
+        return ResponseEntity.ok(commentService.updateComment(commentId, createOrUpdateCommentDto, principal));
     }
 
 
@@ -377,6 +377,39 @@ public class AdsController {
     public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
         UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         return ResponseEntity.ok(adsService.getAdsMe(principal));
+    }
+
+
+    @Operation(summary = "Обновить картинку объявления",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ok",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = MultipartFile.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found"
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Forbidden"
+                    )
+            })
+    @PatchMapping("/{id}/image")
+    public ResponseEntity<String> updateImage(@PathVariable Integer id,
+                                              @RequestBody MultipartFile image,
+                                              Authentication authentication) {
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
+        adsService.updateImage(id, image, principal);
+        return ResponseEntity.ok().build();
     }
 }
 

@@ -2,6 +2,7 @@ package com.malina_ink.resaleplatform.service.impl;
 
 import com.malina_ink.resaleplatform.dto.NewPasswordDto;
 import com.malina_ink.resaleplatform.dto.UpdateUserDto;
+import com.malina_ink.resaleplatform.dto.UserDetailsDto;
 import com.malina_ink.resaleplatform.dto.UserDto;
 import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.enums.Role;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final ImageService imageService;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Обновление пароля пользователя
@@ -56,7 +59,7 @@ public class UserServiceImpl implements UserService {
     public void setNewPassword(NewPasswordDto newPassword, UserPrincipal principal) {
         logger.info("Вызван метод обновления пароля пользователя");
         User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow(RuntimeException::new);
-        user.setPassword(newPassword.getNewPassword());
+        user.setPassword(passwordEncoder.encode(newPassword.getNewPassword()));
         userRepository.save(user);
         userMapper.toDto(user);
     }
@@ -123,6 +126,21 @@ public class UserServiceImpl implements UserService {
     public User getUserByEmail(String email) {
         return userRepository.getUserByEmailIgnoreCase(email).orElseThrow(RuntimeException::new);
     }
+
+
+    /**
+     * Получить аватар пользователя
+     *
+     * @param id идентификатор пользователя
+     * @return массив байтов нужного файла
+     */
+
+    @Override
+    public byte[] getImage(Integer id) {
+        String pathToFile = userRepository.findById(id).orElseThrow().getImage();
+        return imageService.getImageBytes(pathToFile);
+    }
+
 }
 
 
