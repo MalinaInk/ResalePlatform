@@ -16,7 +16,9 @@ public class UserMapper {
         dto.setRole(user.getRole().name());
 //        dto.setImage(user.getImage());
 //        dto.setImage(String.format("/users/%d/image", user.getId()));
-        dto.setImage(String.format("/images/user/%d/image", user.getId()));
+        if (user.getImage() != null) {
+            dto.setImage(String.format("/images/user/%d/image", user.getId()));
+        }
         return dto;
     }
 

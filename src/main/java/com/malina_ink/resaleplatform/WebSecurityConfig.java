@@ -53,16 +53,12 @@ public class WebSecurityConfig {
                 .and()
                 .csrf().
                 disable()
-//                .cors()
-//                .and()
                 .authorizeHttpRequests((authz) ->
                         authz
                                 .requestMatchers(AUTH_WHITELIST)
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET, "/ads", "/images/**")
                                 .permitAll()
-//                                .requestMatchers("/ad/*/image","/user/*/image", "/images/**")
-//                                .permitAll()
                                 .requestMatchers("/ads/**", "/users/**").authenticated()
                 )
                 .cors()

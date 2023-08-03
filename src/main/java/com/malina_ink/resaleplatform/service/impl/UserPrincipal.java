@@ -21,9 +21,11 @@ public class UserPrincipal implements UserDetails {
         return List.of(grantedAuthority);
     }
 
-    public String getUserEmail(){
+//    public String getUserEmail(){
+    public String getUserName(){
         return userDetailsDto.getName();
     }
+
     @Override
     public String getPassword() {
         return userDetailsDto.getPassword();
