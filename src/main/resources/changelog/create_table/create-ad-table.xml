@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+
+    <changeSet id="create-ad-table.1" author="malinaink">
+
+        <preConditions>
+            <not>
+                <tableExists tableName="ad"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="ad">
+
+            <column name="id" autoIncrement="true" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="price" type="INTEGER">
+            </column>
+
+            <column name="title" type="varchar(128)">
+            </column>
+
+            <column name="description" type="TEXT">
+            </column>
+
+            <column name="ad_image" type="varchar(256)">
+            </column>
+
+            <column name="author_id" type="INTEGER">
+            </column>
+
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="ad" baseColumnNames="author_id" constraintName="FK_AD_USER_ID" referencedTableName="user"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+</databaseChangeLog>
