@@ -8,6 +8,7 @@ import com.malina_ink.resaleplatform.entity.Comment;
 import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.enums.Role;
 import com.malina_ink.resaleplatform.exception.AccessErrorException;
+import com.malina_ink.resaleplatform.exception.ObjectAbsenceException;
 import com.malina_ink.resaleplatform.mapper.CommentMapper;
 import com.malina_ink.resaleplatform.repository.AdRepository;
 import com.malina_ink.resaleplatform.repository.CommentRepository;
@@ -16,12 +17,10 @@ import com.malina_ink.resaleplatform.service.CommentService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * Сервис для методов работы с комментариями
@@ -72,9 +71,9 @@ public class CommentServiceImpl implements CommentService {
         Comment commentEntity = new Comment();
 
         Ad adsEntity = adsRepository.findById(adsId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого комментария не существует"));
         User author = userRepository.getUserByEmailIgnoreCase(principal.getUsername())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         commentEntity.setAd(adsEntity);
         commentEntity.setUser(author);
         commentEntity.setCreatedAt(LocalDateTime.now());
@@ -94,9 +93,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Integer commentId, UserPrincipal principal) {
         log.info("Вызван метод удаления комментария по идентификатору (id)");
-        //проверка на авторство редактируемого/удаляемого
-        Comment updateComment = commentRepository.findById(commentId).orElseThrow(RuntimeException::new);
-        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow();
+        Comment updateComment = commentRepository.findById(commentId)
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого комментария не существует"));
+        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         if (user.getId() != updateComment.getUser().getId() && !user.getRole().equals(Role.ADMIN)) {
             throw new AccessErrorException("У вас нет прав на данную операцию");
         }
@@ -118,9 +118,10 @@ public class CommentServiceImpl implements CommentService {
                                     UserPrincipal principal) {
         log.info("Вызван метод обновления комментария по идентификатору (id)");
 
-        //проверка на авторство редактируемого
-        Comment updateComment = commentRepository.findById(commentId).orElseThrow(RuntimeException::new);
-        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow();
+        Comment updateComment = commentRepository.findById(commentId)
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого комментария не существует"));
+        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         if (user.getId() != updateComment.getUser().getId() && !user.getRole().equals(Role.ADMIN)) {
             throw new AccessErrorException("У вас нет прав на данную операцию");
         }

@@ -13,8 +13,6 @@ public class AdMapper {
     public AdDto toDto(Ad ad) {
         AdDto dto = new AdDto();
         dto.setAuthor(ad.getAuthor().getId());
-//        dto.setImage(ad.getAdImage());
-//        dto.setImage(String.format("/ads/%d/image",ad.getId()));
         dto.setImage(String.format("/images/ad/%d/image",ad.getId()));
         dto.setPk(ad.getId());
         dto.setPrice(ad.getPrice());
@@ -28,7 +26,6 @@ public class AdMapper {
         user.setId(dto.getAuthor());
 
         ad.setAuthor(user);
-//        ad.setAdImage(dto.getImage());
         ad.setId(dto.getPk());
         ad.setPrice(dto.getPrice());
         ad.setTitle(dto.getTitle());

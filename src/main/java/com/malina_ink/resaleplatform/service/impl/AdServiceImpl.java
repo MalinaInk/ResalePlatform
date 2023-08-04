@@ -1,6 +1,9 @@
 package com.malina_ink.resaleplatform.service.impl;
 
-import com.malina_ink.resaleplatform.dto.*;
+import com.malina_ink.resaleplatform.dto.AdDto;
+import com.malina_ink.resaleplatform.dto.AdsDto;
+import com.malina_ink.resaleplatform.dto.CreateOrUpdateAdDto;
+import com.malina_ink.resaleplatform.dto.ExtendedAdDto;
 import com.malina_ink.resaleplatform.entity.Ad;
 import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.enums.Role;
@@ -16,15 +19,11 @@ import com.malina_ink.resaleplatform.service.ImageService;
 import com.malina_ink.resaleplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Objects;
 
 /**
  * Сервис AdsServiceImpl
@@ -77,7 +76,8 @@ public class AdServiceImpl implements AdService {
         adsEntity.setTitle(createAds.getTitle());
         adsEntity.setPrice(createAds.getPrice());
         adsEntity.setDescription(createAds.getDescription());
-        User author = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow(RuntimeException::new); //сделать свое исключение
+        User author = userRepository.getUserByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         adsEntity.setAuthor(author);
         adRepository.save(adsEntity);
 
@@ -101,7 +101,8 @@ public class AdServiceImpl implements AdService {
     @Override
     public ExtendedAdDto getById(Integer adsId) {
         log.info("Вызван метод получения объявления по идентификатору (id)");
-        return extendedAdMapper.toDto(adRepository.findById(adsId).orElseThrow());
+        return extendedAdMapper.toDto(adRepository.findById(adsId)
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого объявления не существует")));
     }
 
     /**
@@ -113,9 +114,10 @@ public class AdServiceImpl implements AdService {
     public void deleteAds(Integer adsId, UserPrincipal userPrincipal) {
         log.info("Вызван метод удаления объявления по идентификатору (id)");
 
-        //проверка на авторство редактируемого
-        Ad updateAd = adRepository.findById(adsId).orElseThrow(RuntimeException::new);
-        User user = userRepository.getUserByEmailIgnoreCase(userPrincipal.getUsername()).orElseThrow();
+        Ad updateAd = adRepository.findById(adsId)
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого объявления не существует"));
+        User user = userRepository.getUserByEmailIgnoreCase(userPrincipal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Еакого пользователя не существует"));
         if (user.getId() != updateAd.getAuthor().getId() && !user.getRole().equals(Role.ADMIN)) {
             throw new AccessErrorException("У вас нет прав на данную операцию");
         }
@@ -140,9 +142,9 @@ public class AdServiceImpl implements AdService {
             throw new NotCorrectCostException("Цена должна быть больше 0!");
         }
 
-        //проверка на авторство редактируемого
         Ad updateAd = adRepository.findById(adsId).orElseThrow(RuntimeException::new);
-        User user = userRepository.getUserByEmailIgnoreCase(userPrincipal.getUsername()).orElseThrow();
+        User user = userRepository.getUserByEmailIgnoreCase(userPrincipal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         if (user.getId() != updateAd.getAuthor().getId() && !user.getRole().equals(Role.ADMIN)) {
             throw new AccessErrorException("У вас нет прав на данную операцию");
         }
@@ -185,9 +187,10 @@ public class AdServiceImpl implements AdService {
             throw new ObjectAbsenceException("Такого объявления не существует!");
         }
 
-        //проверка на авторство редактируемого
-        Ad updateAd = adRepository.findById(adsId).orElseThrow(RuntimeException::new);
-        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow();
+        Ad updateAd = adRepository.findById(adsId)
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого объявления не существует"));
+        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         if (user.getId() != updateAd.getAuthor().getId() && !user.getRole().equals(Role.ADMIN)) {
             throw new AccessErrorException("У вас нет прав на данную операцию");
         }
@@ -212,7 +215,9 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public byte[] getImage(Integer id) {
-        String pathToFile = adRepository.findById(id).orElseThrow().getAdImage();
+        String pathToFile = adRepository.findById(id)
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого объявления не существует"))
+                .getAdImage();
         return imageService.getImageBytes(pathToFile);
     }
 

@@ -3,10 +3,8 @@ package com.malina_ink.resaleplatform.service.impl;
 import com.malina_ink.resaleplatform.dto.RegisterDto;
 import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.enums.Role;
-import com.malina_ink.resaleplatform.exception.UserAlreadyExistException;
 import com.malina_ink.resaleplatform.repository.UserRepository;
 import com.malina_ink.resaleplatform.service.AuthService;
-import com.malina_ink.resaleplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,16 +35,6 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public boolean register(RegisterDto registerDto, Role role) {
-//    if (manager.userExists(registerDto.getUsername())) {
-//      return false;
-//    }
-//    manager.createUser(
-//        User.builder()
-//            .passwordEncoder(this.encoder::encode)
-//            .password(registerDto.getPassword())
-//            .username(registerDto.getUsername())
-//            .roles(role.name())
-//
     if (manager.userExists(registerDto.getUsername())) {
       return false;
     }

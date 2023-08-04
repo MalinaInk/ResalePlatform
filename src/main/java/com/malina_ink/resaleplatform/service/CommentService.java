@@ -5,9 +5,6 @@ import com.malina_ink.resaleplatform.dto.CommentsDto;
 import com.malina_ink.resaleplatform.dto.CreateOrUpdateCommentDto;
 import com.malina_ink.resaleplatform.service.impl.UserPrincipal;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.security.core.Authentication;
-
-import java.util.List;
 
 /**
  * Сервис для работы с комментариями.

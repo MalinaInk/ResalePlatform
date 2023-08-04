@@ -2,7 +2,6 @@ package com.malina_ink.resaleplatform.controller;
 
 import com.malina_ink.resaleplatform.dto.NewPasswordDto;
 import com.malina_ink.resaleplatform.dto.UpdateUserDto;
-import com.malina_ink.resaleplatform.dto.UserDetailsDto;
 import com.malina_ink.resaleplatform.dto.UserDto;
 import com.malina_ink.resaleplatform.service.UserService;
 import com.malina_ink.resaleplatform.service.impl.UserPrincipal;
@@ -118,6 +117,12 @@ public class UsersController {
         return ResponseEntity.ok(userServiceImpl.updateUser(updateUser, principal));
     }
 
+    /**
+     * Обновить аватар авторизованного пользователя
+     *
+     * @param image аватар авторизованного пользователя
+     * @return обновленный аватар авторизованного пользователя
+     */
     @Operation(
             summary = "Обновить аватар авторизованного пользователя",
             responses = {
@@ -133,12 +138,7 @@ public class UsersController {
                     )
             })
 
-    /**
-     * Обновить аватар авторизованного пользователя
-     *
-     * @param image аватар авторизованного пользователя
-     * @return обновленный аватар авторизованного пользователя
-     */
+
 
     @PatchMapping("/me/image")
     public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image, Authentication authentication) throws IOException {

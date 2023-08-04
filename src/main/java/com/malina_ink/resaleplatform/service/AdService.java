@@ -6,7 +6,6 @@ import com.malina_ink.resaleplatform.dto.AdsDto;
 import com.malina_ink.resaleplatform.dto.CreateOrUpdateAdDto;
 import com.malina_ink.resaleplatform.dto.ExtendedAdDto;
 import com.malina_ink.resaleplatform.service.impl.UserPrincipal;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

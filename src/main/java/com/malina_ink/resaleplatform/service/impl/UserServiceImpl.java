@@ -2,10 +2,10 @@ package com.malina_ink.resaleplatform.service.impl;
 
 import com.malina_ink.resaleplatform.dto.NewPasswordDto;
 import com.malina_ink.resaleplatform.dto.UpdateUserDto;
-import com.malina_ink.resaleplatform.dto.UserDetailsDto;
 import com.malina_ink.resaleplatform.dto.UserDto;
 import com.malina_ink.resaleplatform.entity.User;
 import com.malina_ink.resaleplatform.enums.Role;
+import com.malina_ink.resaleplatform.exception.ObjectAbsenceException;
 import com.malina_ink.resaleplatform.mapper.UserMapper;
 import com.malina_ink.resaleplatform.repository.UserRepository;
 import com.malina_ink.resaleplatform.service.ImageService;
@@ -14,19 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
 
-/**
- * UserServiceImpl
- * Сервис для обновления пароля, информации, аватара и поиска авторизованного пользователя в базе данных
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -34,17 +28,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(User.class);
-
-    /**
-     * Поле репозитория пользователя
-     */
     private final UserRepository userRepository;
-
-    /**
-     * Поле маппинга пользователя
-     */
     private final UserMapper userMapper;
-
     private final ImageService imageService;
     private final PasswordEncoder passwordEncoder;
 
@@ -58,7 +43,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setNewPassword(NewPasswordDto newPassword, UserPrincipal principal) {
         logger.info("Вызван метод обновления пароля пользователя");
-        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow(RuntimeException::new);
+        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         user.setPassword(passwordEncoder.encode(newPassword.getNewPassword()));
         userRepository.save(user);
         userMapper.toDto(user);
@@ -73,7 +59,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUser(UserPrincipal principal) {
         logger.info("Вызван метод получения информации об авторизованном пользователе");
-        return userMapper.toDto(userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow());
+        return userMapper.toDto(userRepository.getUserByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует")));
     }
 
     /**
@@ -86,7 +73,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UpdateUserDto user, UserPrincipal principal) {
         logger.info("Вызван метод обновления информации об авторизованном пользователе");
-        User userEntity = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow();//сделать исключение
+        User userEntity = userRepository.getUserByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         userEntity.setFirstname(user.getFirstName());
         userEntity.setLastName(user.getLastName());
         userEntity.setPhone(user.getPhone());
@@ -102,9 +90,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDto updateRole(Integer id, Role role) {
-        Optional<User> user = Optional.ofNullable(userRepository.findById(id).orElseThrow(RuntimeException::new));
-        user.orElseThrow().setRole(role);
-        return userMapper.toDto(user.orElseThrow());
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ObjectAbsenceException("Такого пользователя не существует"));
+        user.setRole(role);
+        return userMapper.toDto(user);
     }
 
     /**
@@ -116,7 +105,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserImage(MultipartFile image, UserPrincipal principal) throws IOException {
         logger.info("Вызван метод обновления аватара авторизованного пользователя");
-        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername()).orElseThrow(); // сделать исключение
+        User user = userRepository.getUserByEmailIgnoreCase(principal.getUsername())
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
         String imageUser = imageService.uploadUserImage(image, user.getId());
         user.setImage(imageUser);;
         userRepository.save(user);
@@ -124,7 +114,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.getUserByEmailIgnoreCase(email).orElseThrow(RuntimeException::new);
+        return userRepository.getUserByEmailIgnoreCase(email)
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"));
     }
 
 
@@ -137,7 +128,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public byte[] getImage(Integer id) {
-        String pathToFile = userRepository.findById(id).orElseThrow().getImage();
+        String pathToFile = userRepository.findById(id)
+                .orElseThrow(() ->  new ObjectAbsenceException("Такого пользователя не существует"))
+                .getImage();
         return imageService.getImageBytes(pathToFile);
     }
 
